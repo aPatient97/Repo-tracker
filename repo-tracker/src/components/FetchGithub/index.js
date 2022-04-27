@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 
 function FetchGithub({username}) {
-  const [username, setUsername] = useState(username)
+  const [user, setUser] = useState(username)
   const [data, setData] = useState([])
+  
   useEffect(()=>{
-    const fetchGithub = async (username) => {
+    const fetchGithub = async () => {
       try {
-          console.log('function called')
-          const {data} = await fetch(`https://api.github.com/users/${username}/repos`)
+          // console.log('function called')
+          console.log(user)
+          const {data} = await fetch(`https://api.github.com/users/${user}/repos`)
           console.log(data)
           setData(data)
       } catch (error) {
@@ -15,11 +17,13 @@ function FetchGithub({username}) {
       }
   }
   fetchGithub()
-  }, [])
+  }, [user])
 
 
   return (
-    <div>FetchGithub</div>
+    <div>
+      <p>{data.name}</p>
+    </div>
   )
 }
 
