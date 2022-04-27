@@ -1,39 +1,28 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import FetchGithub from '../FetchGithub'
 
 function UsernameForm() {
     const [username, setUsername] = useState('')
-    const [repoName, setRepoName] = useState([])
-    const [repos, setRepos] = useState([])
 
-        const fetchGithub = async (username) => {
-            try {
-                const {data} = await axios.get(`https://api.github.com/users/${username}/repos`)
-                setRepos(data)
-                console.log(repos)
-            } catch (error) {
-                console.warn(error)
-            }
-        }
-       
-    const updateInput = (e) => {
-        const input = e.target.value
-        setUsername(input)
-    }
-
-    const handleUsername = async (e) => {
+    
+    const handleUsername = e => {
         e.preventDefault()
-        fetchGithub(username)
+        // const input = e.target.value
+        const formData= new FormData(document.querySelector('form')) // console.log this to check what format this is in 
+        const formDataSerialised=Object.fromEntries(formData)
+        setUsername(formDataSerialised.username)
+        setUsername('')
     }
 
   return (
 
     <>
-        <form onSubmit={handleUsername}>
+        <form onSubmit= {handleUsername}>
             <label htmlFor="username">Enter your username</label>
-            <input type="text" id="username" name="username" aria-label="username" placeholder="Enter username" onChange={updateInput}></input>
+            <input type="text" id="username" name="username" aria-label="username" placeholder="Enter username"></input>
             <button type="submit">Submit</button>
         </form>
+        {username &&  <FetchGithub username={username}/>}
     </>
 
   )
