@@ -1,31 +1,53 @@
-import React, { useState } from 'react'
-import FetchGithub from '../FetchGithub'
+import React, {  useState } from 'react'
 
 function UsernameForm() {
-    const [username, setUsername] = useState('Jaxsan2206')
+    const [username, setUsername] = useState('')
+    const [data, setData] = useState(null)
+    const [error, setError] = useState ('')
+    const [openedItem, setOpenedItem] = useState(null);
 
-    
     const handleSubmit = e => {
         e.preventDefault()
-        // const input = e.target.value
-        const formData= new FormData(document.querySelector('form')) // console.log this to check what format this is in 
-        const formDataSerialised=Object.fromEntries(formData)
-        console.log(formDataSerialised)
-        setUsername(formDataSerialised.username)
-        setUsername('')
+        if (!username) return; 
+        try {
+          async function fetchData(){
+            const response = await fetch(`https://api.github.com/users/${username}/repos`)
+            const response_json = await response.json()
+            console.log(response_json)
+            if (response_json.message){
+              setError(response_json.message)
+              setUsername('')
+            } else{
+              setData(response_json)
+            }
+          }
+          fetchData()
+        } catch (error) {
+          console.log(error)
+        }
     }
-
+    
   return (
-
     <>
         <form onSubmit= {handleSubmit}>
-            <label htmlFor="username">Enter your username</label>
-            <input type="text" id="username" name="username" aria-label="username" placeholder="Enter username"></input>
+            <label htmlFor="username">Username: </label>
+            <input type="text" id="username" name="username" aria-label="username" placeholder="ex. Jaxsan2206" value={username} onChange={(e)=>{setUsername(e.target.value)}}></input>
             <button type="submit">Submit</button>
         </form>
-        {<FetchGithub username={username}/>}
+        {data &&
+        data.map((repo,i) => (
+          <div key={i} onClick={()=> setOpenedItem(i)}>
+            <h1>{repo.name}</h1>
+            {openedItem === i ? 
+            <ul>
+              <li>Fork Count: {repo.forks_count}</li>
+              <li>Stargazers Count: {repo.stargazers_count}</li>
+              <li>Open Issues Count: {repo.open_issues_count}</li>
+            </ul> 
+            : ''}
+          </div>
+        ))}
     </>
-
   )
 }
 
