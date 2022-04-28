@@ -1,4 +1,5 @@
 import React, {  useState } from 'react'
+import './style.css'
 
 function UsernameForm() {
     const [username, setUsername] = useState('')
@@ -36,8 +37,8 @@ function UsernameForm() {
         </form>
         {data &&
         data.map((repo,i) => (
-          <div key={i} onClick={()=> setOpenedItem(i)}>
-            <h1>{repo.name}</h1>
+          <div className="repo-div" key={i} onClick={()=> setOpenedItem(i)}>
+            <h2 className="repo-name">{repo.name}</h2>
             {openedItem === i ? 
             <ul>
               <li>Fork Count: {repo.forks_count}</li>
